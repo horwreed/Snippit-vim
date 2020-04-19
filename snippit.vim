@@ -3,10 +3,13 @@ if !has('python3')
     finish
 endif
 
-" Vim comments start with a double quote.
-" Function definition is VimL. We can mix VimL and Python in
-" function definition.
-function! Reddit()
+let s:default_settings = { 'quickfix_window_height': 10 }
+
+function! Goto_window()
+execute 'belowright copen'.10
+endfunction
+
+function! Snippit()
 
 " We start the python code like the next line.
 
@@ -15,6 +18,8 @@ python3 << EOF
 # python. We need urllib for the web service consumer.
 import vim, urllib.request, urllib.parse
 import json
+
+vim.eval('Goto_window()')
 
 def read_description(desc):
     for line in desc.split('\n'):
@@ -49,4 +54,4 @@ EOF
 " Here the python code is closed. We can continue writing VimL or python again.
 endfunction
 
-command Snippit execute 'nnoremap <buffer>'.Reddit().' :call Reddit()<CR>'
+command Snippit execute 'nnoremap <buffer>'.Snippit().' :call Snippit()<CR>'
