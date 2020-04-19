@@ -28,14 +28,11 @@ def read_description(desc):
 # we define a timeout that we'll use in the API call. We don't want
 # users to wait much.
 TIMEOUT = 20
-keywords = ['3', 'linear', 'search']
-keywords = ' '.join(['20']+keywords)
-params = urllib.parse.quote(keywords)
 URL = "http://snip-index.herokuapp.com/search/py/3%20linear%20search"
 
 try:
     # Get the posts and parse the json response
-    response = urllib.request.urlopen(URL)
+    response = urllib.request.urlopen(URL, timeout=TIMEOUT)
     html = response.read()
     results = json.loads(html.decode("utf-8"))
 
