@@ -19,7 +19,16 @@ python3 << EOF
 import vim, urllib.request, urllib.parse
 import json
 
+IS_NVIM = hasattr(vim, 'from_nvim')
+
 vim.eval('Goto_window()')
+
+def call(func, *args):
+    if IS_NVIM:
+        f = getattr(vim.funcs, func)
+    else:
+        f = vim.Function(func)
+    f(*args)
 
 def read_description(desc):
     for line in desc.split('\n'):
@@ -39,10 +48,18 @@ try:
     del vim.current.buffer[:]
     vim.current.buffer[0] = 80*"-"
 
+    items = []
     for result in results:
+        """
     	vim.current.buffer.append(f"func: {result[3]}")
     	read_description(f"description: {result[4]}")
     	vim.current.buffer.append(80*"-")
+	"""
+        items.append(dict(text=f"func: {result[3]}, description: {result[4]}"))
+    
+    context = id(items)
+    data = {'title': 'Snippit Headers', 'context': {'Snippit-Vim': context}, 'items': items}
+    call('setqflist', items)
 
 except Exception as e:
     print(e)
