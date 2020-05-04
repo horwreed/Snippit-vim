@@ -25,6 +25,13 @@ def read_description(desc):
     for line in desc.split('\n'):
     	vim.current.buffer.append(line)
 
+def call_vim_func(func, *args):
+    if IS_NVIM:
+        f = getattr(vim.funcs, func)
+    else:
+        f = vim.Function(func)
+    return f(*args)
+
 # we define a timeout that we'll use in the API call. We don't want
 # users to wait much.
 TIMEOUT = 20
@@ -39,11 +46,17 @@ try:
     del vim.current.buffer[:]
     vim.current.buffer[0] = 80*"-"
 
+    items = []
     for result in results:
-    	vim.current.buffer.append(f"func: {result[3]}")
-    	read_description(f"description: {result[4]}")
-    	vim.current.buffer.append(80*"-")
-
+        items.append(dict(text=f"func: {result[3]}, description: {result[4]}"))
+        #vim.current.buffer.append(f"func: {result[3]}")
+        #read_description(f"description: {result[4]}")
+        #vim.current.buffer.append(80*"-")
+    
+    title = "Snips:"
+    context = id(items)
+    to_display = {'title': title, 'context': {'Snippit snips': context}, 'items': items}
+    call_vim_func("setqflist", [], ' ', to_display)
 except Exception as e:
     print(e)
 
