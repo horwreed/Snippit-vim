@@ -19,23 +19,21 @@ python3 << EOF
 import vim, urllib.request, urllib.parse
 import json
 
-IS_NVIM = hasattr(vim, 'from_nvim')
-
 vim.eval('Goto_window()')
 for buff in vim.buffers:
     print(buff)
     print(vim.current.buffer)
 
-def call(func, *args):
+def read_description(desc):
+    for line in desc.split('\n'):
+    	vim.current.buffer.append(line)
+
+def call_vim_func(func, *args):
     if IS_NVIM:
         f = getattr(vim.funcs, func)
     else:
         f = vim.Function(func)
-    f(*args)
-
-def read_description(desc):
-    for line in desc.split('\n'):
-    	vim.current.buffer.append(line)
+    return f(*args)
 
 # we define a timeout that we'll use in the API call. We don't want
 # users to wait much.
@@ -54,17 +52,15 @@ try:
     print("not here")
     items = []
     for result in results:
-        """
-    	vim.current.buffer.append(f"func: {result[3]}")
-    	read_description(f"description: {result[4]}")
-    	vim.current.buffer.append(80*"-")
-	"""
         items.append(dict(text=f"func: {result[3]}, description: {result[4]}"))
+        #vim.current.buffer.append(f"func: {result[3]}")
+        #read_description(f"description: {result[4]}")
+        #vim.current.buffer.append(80*"-")
     
+    title = "Snips:"
     context = id(items)
-    data = {'title': 'Snippit Headers', 'context': {'Snippit-Vim': context}, 'items': items}
-    call('setqflist', items)
-
+    to_display = {'title': title, 'context': {'Snippit snips': context}, 'items': items}
+    call_vim_func("setqflist", [], ' ', to_display)
 except Exception as e:
     print(e)
 
