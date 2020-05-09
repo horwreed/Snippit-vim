@@ -19,6 +19,8 @@ python3 << EOF
 import vim, urllib.request, urllib.parse
 import json
 
+IS_NVIM = hasattr(vim, 'from_nvim')
+
 vim.eval('Goto_window()')
 for buff in vim.buffers:
     print(buff)
