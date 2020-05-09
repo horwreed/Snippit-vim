@@ -22,6 +22,9 @@ import json
 IS_NVIM = hasattr(vim, 'from_nvim')
 
 vim.eval('Goto_window()')
+for buff in vim.buffers:
+    print(buff)
+    print(vim.current.buffer)
 
 def call(func, *args):
     if IS_NVIM:
@@ -45,9 +48,10 @@ try:
     html = response.read()
     results = json.loads(html.decode("utf-8"))
 
-    del vim.current.buffer[:]
-    vim.current.buffer[0] = 80*"-"
-
+    print("here")
+    #del vim.current.buffer[:]
+    #vim.current.buffer[0] = 80*"-"
+    print("not here")
     items = []
     for result in results:
         """
